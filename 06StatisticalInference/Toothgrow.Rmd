@@ -1,0 +1,73 @@
+---
+title: "Sample-based analysis of exponential distribution"
+author: "Michael Krämer"
+date: "25.10.2015"
+graphics: yes
+output: pdf_document
+---
+```{r, echo=FALSE}
+# initialize stuff
+library(datasets)
+library(ggplot2)
+library(dplyr, warn.conflicts=F)
+tooth <- ToothGrowth
+```
+
+### Abstract
+The report shows the result of a basic analysis of the ToothGrowth dataset from the library 'datasets. It has the title "The Effect of Vitamin C on Tooth Growth in Guinea Pigs".
+
+### General data description
+The data covers 3 variables per observation:
+
+* len (numeric	Tooth length)
+* supp (Supplement type (VC or OJ) meaning ascorbic acid or orange juice)
+* dose (vitamin dose in milligrams)
+
+```{r}
+summary(tooth)
+summary(factor(tooth$dose))
+```
+
+The dataset covers 60 observations, where 30 cover each supplement type. It were 3 doses tested (0.5, 1 and 2 mg) and of each dose exist 10 observations per supplement type which makes up the 60 overall.
+
+Since there is neither a time information given nor identification for individuals in the test group, the observations will not be interpreted as paired. To give a rough idea about the spread of the data, the following plot is provided.
+
+### Exploratory analysis
+```{r, echo=FALSE}
+g <- ggplot(tooth, aes(factor(dose), len))
+g <- g + geom_point(aes(color=supp) )
+g <- g + xlab("dose")
+g
+```
+
+To get a better numerical overview of the existing 6 groups, let's have a look at the mean and the standard deviation of the tooth length in each group.
+
+```{r, echo=TRUE}
+data.frame(
+    tooth %>%
+    group_by(supp, dose) %>%
+    summarise(mu = mean(len), sigma = sd(len)))
+```
+
+Basically the mean of the tooth length seems to be higher with higher doses for both supplement types. Interestingly, the tables shows that the standard deviation decreases with higher doses for the OJ observations while it increases for the VC observations.
+
+### Hypothesis testing
+To examine the assumptions from the summary and to figure out if the increase in tooth length by the dose has statistical significance, a t test is used.
+```{r}
+oj05 <- tooth %>% filter(supp == "OJ", dose == 0.5) %>% select(len)
+oj2 <- tooth %>% filter(supp == "OJ", dose == 2.0) %>% select(len)
+t.test(oj2, oj05, paired = FALSE)
+```
+
+Under the hypotheis $H_0$ that the dose has no effect on the tooth length it would be very unlikely to encounter such data which the very low p-value shows as well as the high t value and the confidence interval which does not include 0.
+
+Further let's try to figure out if there is statistical significance between the 2 supplement types.
+```{r}
+vc2 <- tooth %>% filter(supp == "VC", dose == 2.0) %>% select(len)
+t.test(oj2, vc2, paired = FALSE)
+```
+
+In contrast to the consideration of the dose, the supplement type has clearly no significant effect on the tooth growth. The p-value of >96% quantifies the probability to observe data like is under the hypothesis $H_0$ (that the supplement type has no effect). In this case, we would clearly not reject $H_0$.
+
+### Sources
+The sources for the report can be found on Github at [https://github.com/mkraemerx/datasciencecoursera/tree/master/06StatisticalInference](https://github.com/mkraemerx/datasciencecoursera/tree/master/06StatisticalInference)
