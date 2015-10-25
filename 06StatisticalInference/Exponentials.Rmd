@@ -40,7 +40,7 @@ A histogram is provided to give an overview of the generated sample data. As an 
 ```{r, echo=FALSE}
 g <- ggplot(m_data, aes(x = xb)) + geom_histogram(alpha = .40, binwidth=.2, colour = "black", fill = "red", aes(y = ..density..))
 g <- g + geom_vline(data = m_data, aes(xintercept = mean(xb), color="mean"), size = 1, show_guide = TRUE)
-g <- g + stat_function(fun = dnorm, arg = list(mean = 5), aes(color="norm"), size = 2)
+g <- g + stat_function(fun = dnorm, arg = list(mean = 5, sd = sqrt(.625)), aes(color="norm"), size = 2)
 g <- g + scale_colour_manual(name="Overlay", values=c("red", "azure4"))
 g <- g + xlab("x")
 g
@@ -56,6 +56,8 @@ sd(m_data$xb)
 ```
 
 The empirical variance of the sample is `r var(m_data$xb)` and the standard deviation of the sample is `r sd(m_data$xb)`, both of which are quite close to the expected values from the theoretical consideration above. Again, it must be noted that the distribution of averages follows a normal distribution while the underlying single values are drawn from an exponential distribution. The relations between these two distributions were already discussed in the section about expected properties of the data.
+
+The overlay of the normal distribution in the plot shows as well, that the distribution of the samples is approximately normal
 
 ### Sources
 The sources for the report can be found on Github at [https://github.com/mkraemerx/datasciencecoursera/tree/master/06StatisticalInference](https://github.com/mkraemerx/datasciencecoursera/tree/master/06StatisticalInference)
