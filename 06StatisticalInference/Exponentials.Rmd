@@ -1,0 +1,58 @@
+---
+title: "Sample-based analysis of exponential distribution"
+author: "Michael Krämer"
+date: "25.10.2015"
+graphics: yes
+output: pdf_document
+---
+```{r, echo=FALSE}
+# initialize stuff
+library(ggplot2)
+```
+
+### Abstract
+The report shows the result of an analysis of the distribution of the mean of 40 exponentials (values drawn from the exponential distribution) using R. The analysis is based on random generated sample data and compares properties of the sample set to the theoretical values of the distribution. 1000 samples (of 40 exponentials each) will be generated.
+
+### Data generation
+The following code was used to generate 1000 samples of the mean of 40 random exponentials. Lambda was set to 0.2
+
+The R code creates a list of 1000 number elements (as in intermediate step) and uses then the sapply function to replace every element of that list with the mean of 40 randomly generated number from the exponential distribution. The seed is used to ensure reproducible results, but its value is not particularly relevant.
+
+```{r, echo=TRUE}
+set.seed(174) # just ensure reproducability
+lambda = 0.2
+size = 40
+m_data <- data.frame(xb = sapply(rep(0, 1000), function(x){mean(rexp(size, lambda))}))
+```
+
+### Expected properties
+Let $X_i$ be the ith of our generated sample. The sample data is expected to follow a normal distribution like the distribution of averages of any underlying distribution does. 
+
+Since the mean of the chosen exponential distribution is $\mu = \frac{1}{\lambda}$ and $\lambda = 0.2$ we expect $E[X_i] = 5$ as the mean of our samples.
+
+The standard deviation of the underlying exponential distribution is defined as $\sigma = \frac{1}{\lambda} = 5$ and the variance $Var[Exp] = \frac{1}{\lambda^{2}} = 25$ with respect to our chosen value of $\lambda = 0.2$.
+
+The distribution of averages of 40 exponentials in our case is expected to have a variance of $Var[X_i] = \frac{Var[Exp]}{n} = \frac{25}{40} = 0.625$ and a standard error $SE = \frac{\sigma}{\sqrt{n}} = 0.79$.
+
+### Sample data histogram
+A histogram is provided to give an overview of the generated sample data. As an overlay, the histogram shows the normal distribution with mean of 5 as a continuous curve.
+
+```{r, echo=FALSE}
+g <- ggplot(m_data, aes(x = xb)) + geom_histogram(alpha = .40, binwidth=.2, colour = "black", fill = "red", aes(y = ..density..))
+g <- g + geom_vline(data = m_data, aes(xintercept = mean(xb), color="mean"), size = 1, show_guide = TRUE)
+g <- g + stat_function(fun = dnorm, arg = list(mean = 5), aes(color="norm"), size = 2)
+g <- g + scale_colour_manual(name="Overlay", values=c("red", "azure4"))
+g <- g + xlab("x")
+g
+knitr::kable(summary(m_data))
+```
+
+### Achieved results
+The plot and the data summary show that the sample mean of `mean(m_data$xb)` is close to the theoretical mean of 5.
+
+```{r}
+var(m_data$xb)
+sd(m_data$xb)
+```
+
+The empirical variance of the sample is `r var(m_data$xb)` and the standard deviation of the sample is `r sd(m_data$xb)`, both of which are quite close to the expected values from the theoretical consideration above.
