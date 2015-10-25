@@ -1,0 +1,48 @@
+---
+title: "Motor Trend MPG Analysis"
+author: "Michael Krämer"
+date: "25.10.2015"
+graphics: yes
+output: pdf_document
+---
+```{r, echo=FALSE}
+# initialize stuff
+library(ggplot2)
+library(dplyr, warn.conflicts=F)
+```
+
+### Abstract
+The report shows changes on mpg for cars, especially the influence of the transmission type.
+
+### General data description
+The data is the mtcars data set from the dataset library. The variables can be seen in R help.
+
+### Exploratory analysis
+The interest is primaryly into the mpg of the cars of the data set. Since the transmission type is of interest, too, let's have a look at this.
+
+```{r}
+data <- mtcars  %>% transform( am = factor(am, labels = c("manual", "automatic")))
+g <- ggplot(data, aes(x = am, y = mpg))
+g <- g + geom_boxplot()
+g
+```
+
+### Regression model
+The coefficients of all variables against mpg.
+
+```{r}
+summary(lm(mpg ~ ., data=data))$coefficients
+```
+
+As seen from the t-values, the weight (wt) seems to be the best candidate as a predictor for mpg. Since the transmission type is of interest, too, let's fit a model with only these 2 predictors.
+
+```{r}
+summary(lm(mpg ~ wt + am, data=data))$coefficients
+```
+
+Unfortunately, the relation to am shows by the near-zero t value almost no relation in this regression context. I assume this has to do with the transmission type only having 2 levels. The data shows still that the cars with automatic transmission in the sample have larger mpg as seen in the figure. However, the data supports the statement that this is more due to their weight.
+
+### Hypothesis testing
+
+### Sources
+The sources for the report can be found on Github at [https://github.com/mkraemerx/datasciencecoursera/tree/master/06StatisticalInference](https://github.com/mkraemerx/datasciencecoursera/tree/master/06StatisticalInference)
