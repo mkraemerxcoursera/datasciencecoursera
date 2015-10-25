@@ -28,11 +28,11 @@ m_data <- data.frame(xb = sapply(rep(0, 1000), function(x){mean(rexp(size, lambd
 ### Expected properties
 Let $X_i$ be the ith of our generated sample. The sample data is expected to follow a normal distribution like the distribution of averages of any underlying distribution does. 
 
-Since the mean of the chosen exponential distribution is $\mu = \frac{1}{\lambda}$ and $\lambda = 0.2$ we expect $E[X_i] = 5$ as the mean of our samples.
+Since the mean of the chosen exponential distribution is $\mu = \frac{1}{\lambda}$ and $\lambda = 0.2$ we expect $E[X_i] = 5$ as the mean of our samples. This is due to the fact that averages converge to the value they are estimating, which is in our case the mean of the underlying exponential distribution.
 
 The standard deviation of the underlying exponential distribution is defined as $\sigma = \frac{1}{\lambda} = 5$ and the variance $Var[Exp] = \frac{1}{\lambda^{2}} = 25$ with respect to our chosen value of $\lambda = 0.2$.
 
-The distribution of averages of 40 exponentials in our case is expected to have a variance of $Var[X_i] = \frac{Var[Exp]}{n} = \frac{25}{40} = 0.625$ and a standard error $SE = \frac{\sigma}{\sqrt{n}} = 0.79$.
+The distribution of averages of 40 exponentials in our case is expected to have a variance of $Var[X_i] = \frac{\sigma^{2}}{n} = \frac{25}{40} = 0.625$ and a standard error $SE = \frac{\sigma}{\sqrt{n}} = 0.79$. This follows from the relations given between the population mean (in our case the theoretical value from the distribution) and the sample mean.
 
 ### Sample data histogram
 A histogram is provided to give an overview of the generated sample data. As an overlay, the histogram shows the normal distribution with mean of 5 as a continuous curve.
@@ -55,4 +55,7 @@ var(m_data$xb)
 sd(m_data$xb)
 ```
 
-The empirical variance of the sample is `r var(m_data$xb)` and the standard deviation of the sample is `r sd(m_data$xb)`, both of which are quite close to the expected values from the theoretical consideration above.
+The empirical variance of the sample is `r var(m_data$xb)` and the standard deviation of the sample is `r sd(m_data$xb)`, both of which are quite close to the expected values from the theoretical consideration above. Again, it must be noted that the distribution of averages follows a normal distribution while the underlying single values are drawn from an exponential distribution. The relations between these two distributions were already discussed in the section about expected properties of the data.
+
+### Sources
+The sources for the report can be found on Github at [https://github.com/mkraemerx/datasciencecoursera/tree/master/06StatisticalInference](https://github.com/mkraemerx/datasciencecoursera/tree/master/06StatisticalInference)
